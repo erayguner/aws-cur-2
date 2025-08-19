@@ -151,8 +151,6 @@ lams --rules all
 SELECT COUNT(*) FROM your_schema.your_cur_table;
 ```
 
-## 📞 **Contact Information**
-
 **Deployment Support**: Check DEPLOYMENT_GUIDE.md for detailed instructions
 **Accessibility Questions**: Review DASHBOARD_ACCESSIBILITY.md for complete guidelines
 **Feature Documentation**: See individual dashboard .md files for specific features
