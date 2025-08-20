@@ -496,6 +496,25 @@ view: cur2 {
     description: "AWS region code where the product is located (us-east-1, eu-west-1, etc.)"
   }
 
+  dimension: region {
+    group_label: "Geography > Regional"
+    type: string
+    sql: 
+      CASE 
+        WHEN ${product_region_code} LIKE 'us-east-%' THEN 'US East'
+        WHEN ${product_region_code} LIKE 'us-west-%' THEN 'US West'
+        WHEN ${product_region_code} LIKE 'eu-%' THEN 'Europe'
+        WHEN ${product_region_code} LIKE 'ap-%' THEN 'Asia Pacific'
+        WHEN ${product_region_code} LIKE 'ca-%' THEN 'Canada'
+        WHEN ${product_region_code} LIKE 'sa-%' THEN 'South America'
+        WHEN ${product_region_code} LIKE 'af-%' THEN 'Africa'
+        WHEN ${product_region_code} LIKE 'me-%' THEN 'Middle East'
+        ELSE 'Other/Global'
+      END ;;
+    description: "AWS region grouped by geographic area"
+    map_layer_name: world_countries
+  }
+
   dimension: product_servicecode {
     group_label: "Product > Classification"
     type: string
@@ -1340,6 +1359,13 @@ view: cur2 {
     type: count_distinct
     sql: ${team} ;;
     description: "Count of unique teams"
+  }
+
+  measure: count_projects {
+    group_label: "Tag Analytics > Project Metrics"
+    type: count_distinct
+    sql: ${project} ;;
+    description: "Count of unique projects"
   }
 
   # =====================================================
