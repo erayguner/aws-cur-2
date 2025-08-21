@@ -2151,6 +2151,417 @@ view: cur2 {
     description: "Coefficient of variation for cost data quality assessment"
   }
 
+  # =====================================================
+  # ML/AI SERVICES ANALYTICS
+  # =====================================================
+
+  # ML Service Classification
+  dimension: ml_service_type {
+    group_label: "ML/AI > Service Classification"
+    type: string
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' THEN 'SageMaker'
+        WHEN ${line_item_product_code} = 'AmazonBedrock' THEN 'Bedrock'
+        WHEN ${line_item_product_code} IN ('AmazonTextract', 'AmazonRekognition') THEN 'Computer Vision'
+        WHEN ${line_item_product_code} IN ('AmazonComprehend', 'AmazonLex', 'AmazonPolly', 'AmazonTranscribe', 'AmazonTranslate') THEN 'Language Services'
+        WHEN ${line_item_product_code} = 'AmazonPersonalize' THEN 'Personalization'
+        WHEN ${line_item_product_code} = 'AmazonForecast' THEN 'Forecasting'
+        WHEN ${line_item_product_code} = 'AWSDeepRacer' THEN 'Education'
+        ELSE 'Other'
+      END ;;
+    description: "Classification of ML/AI service types"
+  }
+
+  # ML Lifecycle Stage Classification
+  dimension: ml_lifecycle_stage {
+    group_label: "ML/AI > Lifecycle"
+    type: string
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} LIKE '%Training%' THEN 'Training'
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} LIKE '%Inference%' THEN 'Inference'
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} LIKE '%Notebook%' THEN 'Development'
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} LIKE '%Processing%' THEN 'Data Processing'
+        WHEN ${line_item_product_code} = 'AmazonBedrock' THEN 'Inference'
+        WHEN ${line_item_product_code} IN ('AmazonTextract', 'AmazonRekognition', 'AmazonComprehend', 'AmazonLex', 'AmazonPolly', 'AmazonTranscribe', 'AmazonTranslate') THEN 'Inference'
+        ELSE 'Other'
+      END ;;
+    description: "ML lifecycle stage classification"
+  }
+
+  # SageMaker Instance Type
+  dimension: sagemaker_instance_type {
+    group_label: "ML/AI > SageMaker"
+    type: string
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} IS NOT NULL
+        THEN REGEXP_EXTRACT(${line_item_usage_type}, r'([a-z]+[0-9]+[a-z]*\.[a-z0-9]+)')
+        ELSE NULL
+      END ;;
+    description: "SageMaker instance type extracted from usage type"
+  }
+
+  # Bedrock Model Name
+  dimension: bedrock_model_name {
+    group_label: "ML/AI > Bedrock"
+    type: string
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonBedrock' AND ${line_item_usage_type} IS NOT NULL
+        THEN REGEXP_EXTRACT(${line_item_usage_type}, r'([A-Za-z0-9-]+)(?:-Input|-Output|$)')
+        ELSE NULL
+      END ;;
+    description: "Bedrock model name extracted from usage type"
+  }
+
+  # =====================================================
+  # ML/AI COST MEASURES
+  # =====================================================
+
+  measure: total_ml_ai_cost {
+    group_label: "ML/AI > Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} IN ('AmazonSageMaker', 'AmazonBedrock', 'AmazonTextract', 'AmazonRekognition',
+                                          'AmazonComprehend', 'AmazonLex', 'AmazonPolly', 'AmazonTranscribe', 
+                                          'AmazonTranslate', 'AmazonPersonalize', 'AmazonForecast', 'AWSDeepRacer')
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total cost for all ML/AI services"
+  }
+
+  measure: sagemaker_cost {
+    group_label: "ML/AI > Costs"
+    type: sum
+    sql: CASE WHEN ${line_item_product_code} = 'AmazonSageMaker' THEN ${line_item_unblended_cost} ELSE 0 END ;;
+    value_format: "$#,##0.00"
+    description: "Total SageMaker cost"
+  }
+
+  measure: bedrock_cost {
+    group_label: "ML/AI > Costs"
+    type: sum
+    sql: CASE WHEN ${line_item_product_code} = 'AmazonBedrock' THEN ${line_item_unblended_cost} ELSE 0 END ;;
+    value_format: "$#,##0.00"
+    description: "Total Bedrock cost"
+  }
+
+  measure: computer_vision_cost {
+    group_label: "ML/AI > Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} IN ('AmazonTextract', 'AmazonRekognition') 
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total computer vision services cost (Textract, Rekognition)"
+  }
+
+  measure: language_services_cost {
+    group_label: "ML/AI > Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} IN ('AmazonComprehend', 'AmazonLex', 'AmazonPolly', 'AmazonTranscribe', 'AmazonTranslate') 
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total language services cost (Comprehend, Lex, Polly, Transcribe, Translate)"
+  }
+
+  measure: ml_training_cost {
+    group_label: "ML/AI > Lifecycle Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${ml_lifecycle_stage} = 'Training' 
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total ML training cost"
+  }
+
+  measure: ml_inference_cost {
+    group_label: "ML/AI > Lifecycle Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${ml_lifecycle_stage} = 'Inference' 
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total ML inference cost"
+  }
+
+  measure: ml_development_cost {
+    group_label: "ML/AI > Lifecycle Costs"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${ml_lifecycle_stage} = 'Development' 
+        THEN ${line_item_unblended_cost} 
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "Total ML development cost (notebooks, experimentation)"
+  }
+
+  # =====================================================
+  # ML/AI USAGE MEASURES
+  # =====================================================
+
+  measure: ml_usage_hours {
+    group_label: "ML/AI > Usage"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} IN ('AmazonSageMaker', 'AmazonBedrock') AND ${line_item_usage_amount} IS NOT NULL
+        THEN ${line_item_usage_amount}
+        ELSE 0 
+      END ;;
+    value_format: "#,##0.000"
+    description: "Total ML service usage hours"
+  }
+
+  measure: bedrock_input_tokens {
+    group_label: "ML/AI > Bedrock Tokens"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} = 'AmazonBedrock' AND ${line_item_usage_type} LIKE '%Input%'
+        THEN ${line_item_usage_amount}
+        ELSE 0 
+      END ;;
+    value_format: "#,##0"
+    description: "Total Bedrock input tokens"
+  }
+
+  measure: bedrock_output_tokens {
+    group_label: "ML/AI > Bedrock Tokens"
+    type: sum
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} = 'AmazonBedrock' AND ${line_item_usage_type} LIKE '%Output%'
+        THEN ${line_item_usage_amount}
+        ELSE 0 
+      END ;;
+    value_format: "#,##0"
+    description: "Total Bedrock output tokens"
+  }
+
+  measure: ml_project_count {
+    group_label: "ML/AI > Projects"
+    type: count_distinct
+    sql: 
+      CASE 
+        WHEN ${line_item_product_code} IN ('AmazonSageMaker', 'AmazonBedrock', 'AmazonTextract', 'AmazonRekognition',
+                                          'AmazonComprehend', 'AmazonLex', 'AmazonPolly', 'AmazonTranscribe', 
+                                          'AmazonTranslate', 'AmazonPersonalize', 'AmazonForecast')
+        THEN ${project}
+        ELSE NULL
+      END ;;
+    description: "Count of unique projects using ML/AI services"
+  }
+
+  # =====================================================
+  # ML/AI EFFICIENCY AND OPTIMIZATION MEASURES
+  # =====================================================
+
+  measure: sagemaker_cost_per_hour {
+    group_label: "ML/AI > Efficiency"
+    type: number
+    sql: 
+      CASE 
+        WHEN ${ml_usage_hours} > 0 
+        THEN ${sagemaker_cost} / NULLIF(${ml_usage_hours}, 0)
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.00"
+    description: "SageMaker cost per usage hour"
+  }
+
+  measure: bedrock_cost_per_1k_tokens {
+    group_label: "ML/AI > Efficiency"
+    type: number
+    sql: 
+      CASE 
+        WHEN (${bedrock_input_tokens} + ${bedrock_output_tokens}) > 0 
+        THEN ${bedrock_cost} / NULLIF((${bedrock_input_tokens} + ${bedrock_output_tokens}), 0) * 1000
+        ELSE 0 
+      END ;;
+    value_format: "$#,##0.0000"
+    description: "Bedrock cost per 1000 tokens"
+  }
+
+  measure: ml_efficiency_score {
+    group_label: "ML/AI > Efficiency"
+    type: number
+    sql: 
+      CASE
+        WHEN ${total_ml_ai_cost} > 0 THEN
+          CASE
+            WHEN ${ml_utilization_rate} >= 85 AND ${ml_cost_trend} <= 5 THEN 95
+            WHEN ${ml_utilization_rate} >= 70 AND ${ml_cost_trend} <= 15 THEN 80
+            WHEN ${ml_utilization_rate} >= 50 AND ${ml_cost_trend} <= 25 THEN 65
+            WHEN ${ml_utilization_rate} >= 30 THEN 45
+            ELSE 25
+          END
+        ELSE 0
+      END ;;
+    value_format: "#,##0"
+    description: "ML efficiency score based on utilization and cost trends (0-100)"
+  }
+
+  measure: ml_utilization_rate {
+    group_label: "ML/AI > Efficiency"
+    type: number
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' THEN
+          CASE
+            WHEN ${line_item_usage_type} LIKE '%Training%' THEN 95  -- Training typically has high utilization
+            WHEN ${line_item_usage_type} LIKE '%Inference%' THEN 75  -- Inference has moderate utilization
+            WHEN ${line_item_usage_type} LIKE '%Notebook%' THEN 35   -- Notebooks often idle
+            ELSE 60
+          END
+        WHEN ${line_item_product_code} = 'AmazonBedrock' THEN 85      -- Bedrock has high utilization
+        ELSE 70
+      END ;;
+    value_format: "#,##0.0"
+    description: "Estimated ML service utilization rate percentage"
+  }
+
+  measure: ml_optimization_potential {
+    group_label: "ML/AI > Optimization"
+    type: number
+    sql: 
+      CASE
+        WHEN ${ml_efficiency_score} < 50 THEN 40
+        WHEN ${ml_efficiency_score} < 70 THEN 25
+        WHEN ${ml_efficiency_score} < 85 THEN 15
+        ELSE 5
+      END ;;
+    value_format: "#,##0.0"
+    description: "ML optimization potential percentage"
+  }
+
+  measure: ml_rightsizing_savings {
+    group_label: "ML/AI > Optimization"
+    type: number
+    sql: ${total_ml_ai_cost} * (${ml_optimization_potential} / 100.0) ;;
+    value_format: "$#,##0.00"
+    description: "Potential savings from ML rightsizing"
+  }
+
+  measure: ml_cost_trend {
+    group_label: "ML/AI > Trends"
+    type: number
+    sql: 
+      CASE
+        WHEN LAG(${total_ml_ai_cost}, 1) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date}
+        ) > 0
+        THEN (${total_ml_ai_cost} - LAG(${total_ml_ai_cost}, 1) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date}
+        )) / NULLIF(LAG(${total_ml_ai_cost}, 1) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date}
+        ), 0) * 100
+        ELSE 0
+      END ;;
+    value_format: "#,##0.0"
+    description: "ML cost trend percentage change from previous period"
+  }
+
+  measure: ml_cost_anomaly_score {
+    group_label: "ML/AI > Anomalies"
+    type: number
+    sql: 
+      CASE
+        WHEN ABS(${total_ml_ai_cost} - AVG(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        )) / NULLIF(STDDEV(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        ), 0) > 3 THEN 100
+        WHEN ABS(${total_ml_ai_cost} - AVG(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        )) / NULLIF(STDDEV(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        ), 0) > 2 THEN 75
+        WHEN ABS(${total_ml_ai_cost} - AVG(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        )) / NULLIF(STDDEV(${total_ml_ai_cost}) OVER (
+          PARTITION BY ${line_item_product_code}, ${line_item_usage_account_id} 
+          ORDER BY ${line_item_usage_start_date} 
+          ROWS BETWEEN 6 PRECEDING AND 1 PRECEDING
+        ), 0) > 1.5 THEN 50
+        ELSE 0
+      END ;;
+    value_format: "#,##0"
+    description: "ML cost anomaly detection score (0-100)"
+  }
+
+  measure: bedrock_model_efficiency {
+    group_label: "ML/AI > Bedrock"
+    type: number
+    sql: 
+      CASE
+        WHEN ${bedrock_cost_per_1k_tokens} < 0.01 THEN 95
+        WHEN ${bedrock_cost_per_1k_tokens} < 0.05 THEN 80
+        WHEN ${bedrock_cost_per_1k_tokens} < 0.1 THEN 65
+        WHEN ${bedrock_cost_per_1k_tokens} < 0.2 THEN 45
+        ELSE 25
+      END ;;
+    value_format: "#,##0"
+    description: "Bedrock model efficiency score based on cost per token"
+  }
+
+  # =====================================================
+  # ML/AI RECOMMENDATIONS
+  # =====================================================
+
+  dimension: ml_optimization_recommendation {
+    group_label: "ML/AI > Recommendations"
+    type: string
+    sql: 
+      CASE
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${sagemaker_cost_per_hour} > 5.0 
+        THEN 'Consider rightsizing instances or using Spot instances'
+        WHEN ${line_item_product_code} = 'AmazonSageMaker' AND ${line_item_usage_type} LIKE '%Notebook%' AND ${ml_usage_hours} < 10
+        THEN 'Low notebook usage - consider scheduled stop/start'
+        WHEN ${line_item_product_code} = 'AmazonBedrock' AND ${bedrock_cost_per_1k_tokens} > 0.1
+        THEN 'High token cost - evaluate model selection or prompt optimization'
+        WHEN ${ml_efficiency_score} < 50
+        THEN 'Low efficiency - review resource allocation and usage patterns'
+        WHEN ${ml_cost_anomaly_score} > 75
+        THEN 'Cost anomaly detected - investigate usage spikes'
+        ELSE 'Operating efficiently'
+      END ;;
+    description: "ML optimization recommendations based on usage patterns"
+  }
+
   measure: ingestion_health_score {
     type: number
     sql:
