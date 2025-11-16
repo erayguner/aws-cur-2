@@ -682,7 +682,6 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.line_item_usage_start_date
-    note_text: "⏰ Time Period visualization"
   - name: Account_Filter
     title: 🏢 AWS Account
     type: field_filter
@@ -696,7 +695,6 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.line_item_usage_account_name
-    note_text: "🏢 AWS Account visualization"
   - name: Service_Filter
     title: 🔧 AWS Service
     type: field_filter
@@ -711,7 +709,6 @@
     listens_to_filters:
     - Account_Filter
     field: cur2.line_item_product_code
-    note_text: "🔧 AWS Service visualization"
   - name: Region_Filter
     title: 🌍 AWS Region
     type: field_filter
@@ -725,4 +722,4 @@
     explore: cur2
     listens_to_filters:
     - Service_Filter
-    field: cur2.product_region    note_text: "🌍 AWS Region visualization"
+    field: cur2.product_region

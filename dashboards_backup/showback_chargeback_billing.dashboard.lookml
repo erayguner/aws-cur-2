@@ -27,6 +27,10 @@
     tile_background_color: '#ffffff'
 
   elements:
+  # =====================================================
+  # SECTION: BILLING SUMMARY OVERVIEW
+  # =====================================================
+
   - name: section_header_billing_summary
     type: text
     title_text: "<h2>Billing Summary Overview</h2>"
@@ -44,19 +48,17 @@
     type: single_value
     fields: [cur2.total_unblended_cost]
     limit: 1
-    visualization_config:
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "TOTAL BILLABLE AMOUNT"
-      value_format: "$#,##0.00"
-      conditional_formatting:
-      - type: greater than
-        value: 100000
-        background_color: "#fef3c7"
-        font_color: "#92400e"
-        bold: true
-    note_text: "Element visualization"
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "TOTAL BILLABLE AMOUNT"
+    value_format: "$#,##0.00"
+    conditional_formatting:
+    - type: greater than
+      value: 100000
+      background_color: "#fef3c7"
+      font_color: "#92400e"
+      bold: true
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -68,6 +70,7 @@
     col: 0
     width: 4
     height: 4
+
   - title: "Allocated Costs"
     name: allocated_costs_kpi
     model: aws_billing
@@ -75,19 +78,17 @@
     type: single_value
     fields: [cur2.team_cost_allocation]
     limit: 1
-    visualization_config:
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "ALLOCATED COSTS"
-      value_format: "$#,##0.00"
-      conditional_formatting:
-      - type: greater than
-        value: 50000
-        background_color: "#dcfce7"
-        font_color: "#166534"
-        bold: true
-    note_text: "Element visualization"
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "ALLOCATED COSTS"
+    value_format: "$#,##0.00"
+    conditional_formatting:
+    - type: greater than
+      value: 50000
+      background_color: "#dcfce7"
+      font_color: "#166534"
+      bold: true
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -99,6 +100,7 @@
     col: 4
     width: 4
     height: 4
+
   - title: "Unallocated Costs"
     name: unallocated_costs_kpi
     model: aws_billing
@@ -106,24 +108,22 @@
     type: single_value
     fields: [cur2.unallocated_team_cost]
     limit: 1
-    visualization_config:
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "UNALLOCATED COSTS"
-      value_format: "$#,##0.00"
-      conditional_formatting:
-      - type: less than
-        value: 1000
-        background_color: "#16a34a"
-        font_color: "#ffffff"
-        bold: true
-      - type: greater than
-        value: 10000
-        background_color: "#dc2626"
-        font_color: "#ffffff"
-        bold: true
-    note_text: "Element visualization"
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "UNALLOCATED COSTS"
+    value_format: "$#,##0.00"
+    conditional_formatting:
+    - type: less than
+      value: 1000
+      background_color: "#16a34a"
+      font_color: "#ffffff"
+      bold: true
+    - type: greater than
+      value: 10000
+      background_color: "#dc2626"
+      font_color: "#ffffff"
+      bold: true
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -133,6 +133,7 @@
     col: 8
     width: 4
     height: 4
+
   - title: "Active Cost Centers"
     name: active_cost_centers_kpi
     model: aws_billing
@@ -140,13 +141,11 @@
     type: single_value
     fields: [cur2.count_teams]
     limit: 1
-    visualization_config:
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "ACTIVE COST CENTERS"
-      value_format: "#,##0"
-    note_text: "Element visualization"
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "ACTIVE COST CENTERS"
+    value_format: "#,##0"
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -158,6 +157,7 @@
     col: 12
     width: 4
     height: 4
+
   - title: "Active Departments"
     name: active_departments_kpi
     model: aws_billing
@@ -165,13 +165,11 @@
     type: single_value
     fields: [cur2.count_projects]
     limit: 1
-    visualization_config:
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "ACTIVE DEPARTMENTS"
-      value_format: "#,##0"
-    note_text: "Element visualization"
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "ACTIVE DEPARTMENTS"
+    value_format: "#,##0"
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -183,6 +181,7 @@
     col: 16
     width: 4
     height: 4
+
   - title: "Allocation Rate"
     name: allocation_rate_kpi
     model: aws_billing
@@ -194,29 +193,24 @@
     - table_calculation: allocation_rate
       label: Allocation Rate
       expression: "(${cur2.team_cost_allocation} / nullif(${cur2.total_unblended_cost}, 0)) * 100"
-      _type_hint: number
-  # =====================================================
-  # SECTION: DEPARTMENT/TEAM COST ALLOCATION
-  # =====================================================
-    visualization_config:
-        value_format: "#,##0.0\"%\""
-      custom_color_enabled: true
-      show_single_value_title: true
-      show_comparison: false
-      single_value_title: "ALLOCATION RATE"
       value_format: "#,##0.0\"%\""
-      conditional_formatting:
-      - type: greater than
-        value: 95
-        background_color: "#16a34a"
-        font_color: "#ffffff"
-        bold: true
-      - type: less than
-        value: 80
-        background_color: "#dc2626"
-        font_color: "#ffffff"
-        bold: true
-    note_text: "Element visualization"
+      _type_hint: number
+    custom_color_enabled: true
+    show_single_value_title: true
+    show_comparison: false
+    single_value_title: "ALLOCATION RATE"
+    value_format: "#,##0.0\"%\""
+    conditional_formatting:
+    - type: greater than
+      value: 95
+      background_color: "#16a34a"
+      font_color: "#ffffff"
+      bold: true
+    - type: less than
+      value: 80
+      background_color: "#dc2626"
+      font_color: "#ffffff"
+      bold: true
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -228,6 +222,11 @@
     col: 20
     width: 4
     height: 4
+
+  # =====================================================
+  # SECTION: DEPARTMENT/TEAM COST ALLOCATION
+  # =====================================================
+
   - name: section_header_cost_allocation
     type: text
     title_text: "<h2>Department & Team Cost Allocation</h2>"
@@ -247,56 +246,54 @@
              cur2.environment_development_cost, cur2.environment_staging_cost]
     sorts: [cur2.total_unblended_cost desc]
     limit: 20
-    visualization_config:
-      x_axis_gridlines: false
-      y_axis_gridlines: true
-      show_view_names: false
-      show_y_axis_labels: true
-      show_y_axis_ticks: true
-      y_axis_tick_density: default
-      show_x_axis_label: true
-      show_x_axis_ticks: true
-      y_axis_scale_mode: linear
-      x_axis_reversed: false
-      y_axis_reversed: false
-      plot_size_by_field: false
-      trellis: ""
-      stacking: normal
-      limit_displayed_rows: false
-      legend_position: center
-      point_style: none
-      show_value_labels: false
-      label_density: 25
-      x_axis_scale: auto
-      y_axis_combined: true
-      ordering: none
-      show_null_labels: false
-      show_totals_labels: true
-      show_silhouette: false
-      totals_color: "#808080"
-      color_application:
-        collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-        palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
-      y_axes:
-      - label: "Cost"
-        orientation: left
-        series:
-        - axisId: cur2.total_unblended_cost
-          id: cur2.total_unblended_cost
-          name: Total Cost
-        showLabels: true
-        showValues: true
-        valueFormat: "$#,##0"
-        unpinAxis: false
-        tickDensity: default
-        type: linear
-      series_colors:
-        cur2.environment_production_cost: "#dc2626"
-        cur2.environment_development_cost: "#16a34a"
-        cur2.environment_staging_cost: "#fbbf24"
-      defaults_version: 1
-      hidden_fields: [cur2.total_unblended_cost]
-    note_text: "Element visualization"
+    x_axis_gridlines: false
+    y_axis_gridlines: true
+    show_view_names: false
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    y_axis_tick_density: default
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    y_axis_scale_mode: linear
+    x_axis_reversed: false
+    y_axis_reversed: false
+    plot_size_by_field: false
+    trellis: ""
+    stacking: normal
+    limit_displayed_rows: false
+    legend_position: center
+    point_style: none
+    show_value_labels: false
+    label_density: 25
+    x_axis_scale: auto
+    y_axis_combined: true
+    ordering: none
+    show_null_labels: false
+    show_totals_labels: true
+    show_silhouette: false
+    totals_color: "#808080"
+    color_application:
+      collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+      palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
+    y_axes:
+    - label: "Cost"
+      orientation: left
+      series:
+      - axisId: cur2.total_unblended_cost
+        id: cur2.total_unblended_cost
+        name: Total Cost
+      showLabels: true
+      showValues: true
+      valueFormat: "$#,##0"
+      unpinAxis: false
+      tickDensity: default
+      type: linear
+    series_colors:
+      cur2.environment_production_cost: "#dc2626"
+      cur2.environment_development_cost: "#16a34a"
+      cur2.environment_staging_cost: "#fbbf24"
+    defaults_version: 1
+    hidden_fields: [cur2.total_unblended_cost]
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -308,6 +305,7 @@
     col: 0
     width: 12
     height: 8
+
   - title: "Cost by Department/Project"
     name: cost_by_department
     model: aws_billing
@@ -316,55 +314,50 @@
     fields: [cur2.project, cur2.total_unblended_cost, cur2.count_unique_resources]
     sorts: [cur2.total_unblended_cost desc]
     limit: 20
-  # =====================================================
-  # SECTION: INTERNAL BILLING REPORTS
-  # =====================================================
-    visualization_config:
-      x_axis_gridlines: false
-      y_axis_gridlines: true
-      show_view_names: false
-      show_y_axis_labels: true
-      show_y_axis_ticks: true
-      y_axis_tick_density: default
-      show_x_axis_label: true
-      show_x_axis_ticks: true
-      y_axis_scale_mode: linear
-      x_axis_reversed: false
-      y_axis_reversed: false
-      plot_size_by_field: false
-      trellis: ""
-      stacking: ""
-      limit_displayed_rows: false
-      legend_position: center
-      point_style: none
-      show_value_labels: true
-      label_density: 25
-      x_axis_scale: auto
-      y_axis_combined: true
-      ordering: none
-      show_null_labels: false
-      show_totals_labels: false
-      show_silhouette: false
-      totals_color: "#808080"
-      color_application:
-        collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-        palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
-      y_axes:
-      - label: "Cost"
-        orientation: bottom
-        series:
-        - axisId: cur2.total_unblended_cost
-          id: cur2.total_unblended_cost
-          name: Total Cost
-        showLabels: true
-        showValues: true
-        valueFormat: "$#,##0"
-        unpinAxis: false
-        tickDensity: default
-        type: linear
-      defaults_version: 1
-      hidden_fields: [cur2.count_unique_resources]
-    note_text: "Element visualization"
+    x_axis_gridlines: false
+    y_axis_gridlines: true
+    show_view_names: false
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    y_axis_tick_density: default
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    y_axis_scale_mode: linear
+    x_axis_reversed: false
+    y_axis_reversed: false
+    plot_size_by_field: false
+    trellis: ""
+    stacking: ""
+    limit_displayed_rows: false
+    legend_position: center
+    point_style: none
+    show_value_labels: true
+    label_density: 25
+    x_axis_scale: auto
+    y_axis_combined: true
+    ordering: none
+    show_null_labels: false
+    show_totals_labels: false
+    show_silhouette: false
+    totals_color: "#808080"
+    color_application:
+      collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+      palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
+    y_axes:
+    - label: "Cost"
+      orientation: bottom
+      series:
+      - axisId: cur2.total_unblended_cost
+        id: cur2.total_unblended_cost
+        name: Total Cost
+      showLabels: true
+      showValues: true
+      valueFormat: "$#,##0"
+      unpinAxis: false
+      tickDensity: default
+      type: linear
+    defaults_version: 1
+    hidden_fields: [cur2.count_unique_resources]
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -376,6 +369,11 @@
     col: 12
     width: 12
     height: 8
+
+  # =====================================================
+  # SECTION: INTERNAL BILLING REPORTS
+  # =====================================================
+
   - name: section_header_billing_reports
     type: text
     title_text: "<h2>Internal Billing Reports</h2>"
@@ -400,51 +398,46 @@
     - table_calculation: other_services_cost
       label: Other Services Cost
       expression: "${cur2.total_unblended_cost} - ${cur2.ec2_cost} - ${cur2.s3_cost} - ${cur2.rds_cost} - ${cur2.lambda_cost}"
+      value_format: "$#,##0.00"
       _type_hint: number
     - table_calculation: avg_cost_per_resource
       label: Avg Cost Per Resource
       expression: "${cur2.total_unblended_cost} / nullif(${cur2.count_unique_resources}, 0)"
+      value_format: "$#,##0.00"
       _type_hint: number
-  # =====================================================
-  # SECTION: COST CENTER ATTRIBUTION
-  # =====================================================
-    visualization_config:
-        value_format: "$#,##0.00"
-        value_format: "$#,##0.00"
-      show_view_names: false
-      show_row_numbers: true
-      transpose: false
-      truncate_text: true
-      hide_totals: false
-      hide_row_totals: false
-      size_to_fit: true
-      table_theme: white
-      limit_displayed_rows: false
-      enable_conditional_formatting: true
-      header_text_alignment: left
-      header_font_size: 11
-      rows_font_size: 11
-      conditional_formatting:
-      - type: greater than
-        value: 10000
-        background_color: "#fef3c7"
-        font_color: "#92400e"
-        bold: true
-        fields: [cur2.total_unblended_cost]
-      - type: greater than
-        value: 5000
-        background_color: "#dcfce7"
-        font_color: "#166534"
-        bold: false
-        fields: [cur2.ec2_cost]
-      series_value_format:
-        cur2.total_unblended_cost: "$#,##0.00"
-        cur2.ec2_cost: "$#,##0.00"
-        cur2.s3_cost: "$#,##0.00"
-        cur2.rds_cost: "$#,##0.00"
-        cur2.lambda_cost: "$#,##0.00"
-      defaults_version: 1
-    note_text: "Element visualization"
+    show_view_names: false
+    show_row_numbers: true
+    transpose: false
+    truncate_text: true
+    hide_totals: false
+    hide_row_totals: false
+    size_to_fit: true
+    table_theme: white
+    limit_displayed_rows: false
+    enable_conditional_formatting: true
+    header_text_alignment: left
+    header_font_size: 11
+    rows_font_size: 11
+    conditional_formatting:
+    - type: greater than
+      value: 10000
+      background_color: "#fef3c7"
+      font_color: "#92400e"
+      bold: true
+      fields: [cur2.total_unblended_cost]
+    - type: greater than
+      value: 5000
+      background_color: "#dcfce7"
+      font_color: "#166534"
+      bold: false
+      fields: [cur2.ec2_cost]
+    series_value_format:
+      cur2.total_unblended_cost: "$#,##0.00"
+      cur2.ec2_cost: "$#,##0.00"
+      cur2.s3_cost: "$#,##0.00"
+      cur2.rds_cost: "$#,##0.00"
+      cur2.lambda_cost: "$#,##0.00"
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -456,6 +449,11 @@
     col: 0
     width: 24
     height: 10
+
+  # =====================================================
+  # SECTION: COST CENTER ATTRIBUTION
+  # =====================================================
+
   - name: section_header_cost_center
     type: text
     title_text: "<h2>Cost Center Attribution</h2>"
@@ -474,15 +472,13 @@
     fields: [cur2.team, cur2.total_unblended_cost]
     sorts: [cur2.total_unblended_cost desc]
     limit: 15
-    visualization_config:
-      value_labels: legend
-      label_type: labPer
-      inner_radius: 50
-      color_application:
-        collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-        palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
-      defaults_version: 1
-    note_text: "Element visualization"
+    value_labels: legend
+    label_type: labPer
+    inner_radius: 50
+    color_application:
+      collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+      palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -494,6 +490,7 @@
     col: 0
     width: 8
     height: 8
+
   - title: "Cost Center Trend"
     name: cost_center_trend
     model: aws_billing
@@ -503,52 +500,47 @@
     pivots: [cur2.team]
     sorts: [cur2.line_item_usage_start_date, cur2.team]
     limit: 500
-  # =====================================================
-  # SECTION: SHARED SERVICES ALLOCATION
-  # =====================================================
-    visualization_config:
-      column_limit: 10
-      x_axis_gridlines: false
-      y_axis_gridlines: true
-      show_view_names: false
-      show_y_axis_labels: true
-      show_y_axis_ticks: true
-      y_axis_tick_density: default
-      show_x_axis_label: true
-      show_x_axis_ticks: true
-      y_axis_scale_mode: linear
-      x_axis_reversed: false
-      y_axis_reversed: false
-      plot_size_by_field: false
-      trellis: ""
-      stacking: ""
-      limit_displayed_rows: false
-      legend_position: center
-      point_style: circle
-      show_value_labels: false
-      label_density: 25
-      x_axis_scale: auto
-      y_axis_combined: true
-      show_null_points: true
-      interpolation: linear
-      color_application:
-        collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-        palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
-      y_axes:
-      - label: "Cost"
-        orientation: left
-        series:
-        - axisId: cur2.total_unblended_cost
-          id: cur2.total_unblended_cost
-          name: Total Cost
-        showLabels: true
-        showValues: true
-        valueFormat: "$#,##0"
-        unpinAxis: false
-        tickDensity: default
-        type: linear
-      defaults_version: 1
-    note_text: "Element visualization"
+    column_limit: 10
+    x_axis_gridlines: false
+    y_axis_gridlines: true
+    show_view_names: false
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    y_axis_tick_density: default
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    y_axis_scale_mode: linear
+    x_axis_reversed: false
+    y_axis_reversed: false
+    plot_size_by_field: false
+    trellis: ""
+    stacking: ""
+    limit_displayed_rows: false
+    legend_position: center
+    point_style: circle
+    show_value_labels: false
+    label_density: 25
+    x_axis_scale: auto
+    y_axis_combined: true
+    show_null_points: true
+    interpolation: linear
+    color_application:
+      collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+      palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
+    y_axes:
+    - label: "Cost"
+      orientation: left
+      series:
+      - axisId: cur2.total_unblended_cost
+        id: cur2.total_unblended_cost
+        name: Total Cost
+      showLabels: true
+      showValues: true
+      valueFormat: "$#,##0"
+      unpinAxis: false
+      tickDensity: default
+      type: linear
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -560,6 +552,11 @@
     col: 8
     width: 16
     height: 8
+
+  # =====================================================
+  # SECTION: SHARED SERVICES ALLOCATION
+  # =====================================================
+
   - name: section_header_shared_services
     type: text
     title_text: "<h2>Shared Services Allocation</h2>"
@@ -584,68 +581,66 @@
     - table_calculation: allocated_per_account
       label: Allocated Per Account
       expression: "${cur2.total_unblended_cost} / nullif(${cur2.count_unique_accounts}, 0)"
+      value_format: "$#,##0.00"
       _type_hint: number
-    visualization_config:
-        value_format: "$#,##0.00"
-      x_axis_gridlines: false
-      y_axis_gridlines: true
-      show_view_names: false
-      show_y_axis_labels: true
-      show_y_axis_ticks: true
-      y_axis_tick_density: default
-      show_x_axis_label: true
-      show_x_axis_ticks: true
-      y_axis_scale_mode: linear
-      x_axis_reversed: false
-      y_axis_reversed: false
-      plot_size_by_field: false
-      trellis: ""
-      stacking: ""
-      limit_displayed_rows: false
-      legend_position: center
-      point_style: none
-      show_value_labels: true
-      label_density: 25
-      x_axis_scale: auto
-      y_axis_combined: true
-      ordering: none
-      show_null_labels: false
-      show_totals_labels: false
-      show_silhouette: false
-      totals_color: "#808080"
-      color_application:
-        collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-        palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
-      y_axes:
-      - label: "Total Cost"
-        orientation: left
-        series:
-        - axisId: cur2.total_unblended_cost
-          id: cur2.total_unblended_cost
-          name: Total Cost
-        showLabels: true
-        showValues: true
-        valueFormat: "$#,##0"
-        unpinAxis: false
-        tickDensity: default
-        type: linear
-      - label: "Per Account"
-        orientation: right
-        series:
-        - axisId: allocated_per_account
-          id: allocated_per_account
-          name: Per Account
-        showLabels: true
-        showValues: true
-        valueFormat: "$#,##0"
-        unpinAxis: false
-        tickDensity: default
-        type: linear
-      series_types:
-        allocated_per_account: line
-      defaults_version: 1
-      hidden_fields: [cur2.count_unique_accounts]
-    note_text: "Element visualization"
+    x_axis_gridlines: false
+    y_axis_gridlines: true
+    show_view_names: false
+    show_y_axis_labels: true
+    show_y_axis_ticks: true
+    y_axis_tick_density: default
+    show_x_axis_label: true
+    show_x_axis_ticks: true
+    y_axis_scale_mode: linear
+    x_axis_reversed: false
+    y_axis_reversed: false
+    plot_size_by_field: false
+    trellis: ""
+    stacking: ""
+    limit_displayed_rows: false
+    legend_position: center
+    point_style: none
+    show_value_labels: true
+    label_density: 25
+    x_axis_scale: auto
+    y_axis_combined: true
+    ordering: none
+    show_null_labels: false
+    show_totals_labels: false
+    show_silhouette: false
+    totals_color: "#808080"
+    color_application:
+      collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+      palette_id: 5d189dfc-4f46-46f3-822b-bfb0b61777b1
+    y_axes:
+    - label: "Total Cost"
+      orientation: left
+      series:
+      - axisId: cur2.total_unblended_cost
+        id: cur2.total_unblended_cost
+        name: Total Cost
+      showLabels: true
+      showValues: true
+      valueFormat: "$#,##0"
+      unpinAxis: false
+      tickDensity: default
+      type: linear
+    - label: "Per Account"
+      orientation: right
+      series:
+      - axisId: allocated_per_account
+        id: allocated_per_account
+        name: Per Account
+      showLabels: true
+      showValues: true
+      valueFormat: "$#,##0"
+      unpinAxis: false
+      tickDensity: default
+      type: linear
+    series_types:
+      allocated_per_account: line
+    defaults_version: 1
+    hidden_fields: [cur2.count_unique_accounts]
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -656,6 +651,7 @@
     col: 0
     width: 16
     height: 8
+
   - title: "Shared Services Allocation Model"
     name: shared_services_allocation_model
     model: aws_billing
@@ -671,41 +667,36 @@
     - table_calculation: allocation_per_team
       label: Allocation Per Team
       expression: "${cur2.total_unblended_cost} / nullif(${cur2.count_teams}, 0)"
+      value_format: "$#,##0.00"
       _type_hint: number
     - table_calculation: allocation_method
       label: Allocation Method
       expression: "\"Equal Split\""
       _type_hint: string
-  # =====================================================
-  # SECTION: TRANSFER PRICING MODELS
-  # =====================================================
-    visualization_config:
-        value_format: "$#,##0.00"
-      show_view_names: false
-      show_row_numbers: true
-      transpose: false
-      truncate_text: true
-      hide_totals: false
-      hide_row_totals: false
-      size_to_fit: true
-      table_theme: white
-      limit_displayed_rows: false
-      enable_conditional_formatting: true
-      header_text_alignment: left
-      header_font_size: 11
-      rows_font_size: 11
-      conditional_formatting:
-      - type: greater than
-        value: 1000
-        background_color: "#fef3c7"
-        font_color: "#92400e"
-        bold: false
-        fields: [allocation_per_team]
-      series_value_format:
-        cur2.total_unblended_cost: "$#,##0.00"
-      defaults_version: 1
-      hidden_fields: [cur2.count_unique_accounts, cur2.count_projects]
-    note_text: "Element visualization"
+    show_view_names: false
+    show_row_numbers: true
+    transpose: false
+    truncate_text: true
+    hide_totals: false
+    hide_row_totals: false
+    size_to_fit: true
+    table_theme: white
+    limit_displayed_rows: false
+    enable_conditional_formatting: true
+    header_text_alignment: left
+    header_font_size: 11
+    rows_font_size: 11
+    conditional_formatting:
+    - type: greater than
+      value: 1000
+      background_color: "#fef3c7"
+      font_color: "#92400e"
+      bold: false
+      fields: [allocation_per_team]
+    series_value_format:
+      cur2.total_unblended_cost: "$#,##0.00"
+    defaults_version: 1
+    hidden_fields: [cur2.count_unique_accounts, cur2.count_projects]
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -716,6 +707,11 @@
     col: 16
     width: 8
     height: 8
+
+  # =====================================================
+  # SECTION: TRANSFER PRICING MODELS
+  # =====================================================
+
   - name: section_header_transfer_pricing
     type: text
     title_text: "<h2>Transfer Pricing Models</h2>"
@@ -739,52 +735,47 @@
     - table_calculation: unit_rate
       label: Unit Rate
       expression: "${cur2.total_unblended_cost} / nullif(${cur2.total_usage_amount}, 0)"
+      value_format: "$#,##0.0000"
       _type_hint: number
     - table_calculation: markup_percentage
       label: Markup %
       expression: "15"
+      value_format: "#,##0.0\"%\""
       _type_hint: number
     - table_calculation: transfer_price
       label: Transfer Price
       expression: "${unit_rate} * (1 + (${markup_percentage} / 100))"
+      value_format: "$#,##0.0000"
       _type_hint: number
     - table_calculation: total_transfer_revenue
       label: Total Transfer Revenue
       expression: "${transfer_price} * ${cur2.total_usage_amount}"
+      value_format: "$#,##0.00"
       _type_hint: number
-  # =====================================================
-  # SECTION: INVOICE GENERATION VIEWS
-  # =====================================================
-    visualization_config:
-        value_format: "$#,##0.0000"
-        value_format: "#,##0.0\"%\""
-        value_format: "$#,##0.0000"
-        value_format: "$#,##0.00"
-      show_view_names: false
-      show_row_numbers: true
-      transpose: false
-      truncate_text: true
-      hide_totals: false
-      hide_row_totals: false
-      size_to_fit: true
-      table_theme: white
-      limit_displayed_rows: false
-      enable_conditional_formatting: true
-      header_text_alignment: left
-      header_font_size: 11
-      rows_font_size: 11
-      conditional_formatting:
-      - type: greater than
-        value: 10000
-        background_color: "#dcfce7"
-        font_color: "#166534"
-        bold: true
-        fields: [total_transfer_revenue]
-      series_value_format:
-        cur2.total_unblended_cost: "$#,##0.00"
-        cur2.total_usage_amount: "#,##0.000"
-      defaults_version: 1
-    note_text: "Element visualization"
+    show_view_names: false
+    show_row_numbers: true
+    transpose: false
+    truncate_text: true
+    hide_totals: false
+    hide_row_totals: false
+    size_to_fit: true
+    table_theme: white
+    limit_displayed_rows: false
+    enable_conditional_formatting: true
+    header_text_alignment: left
+    header_font_size: 11
+    rows_font_size: 11
+    conditional_formatting:
+    - type: greater than
+      value: 10000
+      background_color: "#dcfce7"
+      font_color: "#166534"
+      bold: true
+      fields: [total_transfer_revenue]
+    series_value_format:
+      cur2.total_unblended_cost: "$#,##0.00"
+      cur2.total_usage_amount: "#,##0.000"
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -796,6 +787,11 @@
     col: 0
     width: 24
     height: 10
+
+  # =====================================================
+  # SECTION: INVOICE GENERATION VIEWS
+  # =====================================================
+
   - name: section_header_invoice
     type: text
     title_text: "<h2>Invoice-Ready Reports</h2>"
@@ -833,51 +829,46 @@
       label: Due Date
       expression: "add_days(30, ${invoice_date})"
       _type_hint: date
-  # =====================================================
-  # SECTION: COST ALLOCATION SUMMARY
-  # =====================================================
-    visualization_config:
-      show_view_names: false
-      show_row_numbers: true
-      transpose: false
-      truncate_text: true
-      hide_totals: false
-      hide_row_totals: false
-      size_to_fit: true
-      table_theme: white
-      limit_displayed_rows: false
-      enable_conditional_formatting: true
-      header_text_alignment: left
-      header_font_size: 11
-      rows_font_size: 11
-      conditional_formatting:
-      - type: greater than
-        value: 10000
-        background_color: "#fef3c7"
-        font_color: "#92400e"
-        bold: true
-        fields: [cur2.total_net_unblended_cost]
-      - type: greater than
-        value: 1000
-        background_color: "#dcfce7"
-        font_color: "#166534"
-        bold: false
-        fields: [cur2.total_discount_amount]
-      series_value_format:
-        cur2.total_unblended_cost: "$#,##0.00"
-        cur2.total_discount_amount: "$#,##0.00"
-        cur2.total_net_unblended_cost: "$#,##0.00"
-      series_cell_visualizations:
-        cur2.total_net_unblended_cost:
-          is_active: true
-          palette:
-            palette_id: custom_sequential
-            collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-            custom_colors:
-            - "#ffffff"
-            - "#fbbf24"
-      defaults_version: 1
-    note_text: "Element visualization"
+    show_view_names: false
+    show_row_numbers: true
+    transpose: false
+    truncate_text: true
+    hide_totals: false
+    hide_row_totals: false
+    size_to_fit: true
+    table_theme: white
+    limit_displayed_rows: false
+    enable_conditional_formatting: true
+    header_text_alignment: left
+    header_font_size: 11
+    rows_font_size: 11
+    conditional_formatting:
+    - type: greater than
+      value: 10000
+      background_color: "#fef3c7"
+      font_color: "#92400e"
+      bold: true
+      fields: [cur2.total_net_unblended_cost]
+    - type: greater than
+      value: 1000
+      background_color: "#dcfce7"
+      font_color: "#166534"
+      bold: false
+      fields: [cur2.total_discount_amount]
+    series_value_format:
+      cur2.total_unblended_cost: "$#,##0.00"
+      cur2.total_discount_amount: "$#,##0.00"
+      cur2.total_net_unblended_cost: "$#,##0.00"
+    series_cell_visualizations:
+      cur2.total_net_unblended_cost:
+        is_active: true
+        palette:
+          palette_id: custom_sequential
+          collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+          custom_colors:
+          - "#ffffff"
+          - "#fbbf24"
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -889,6 +880,11 @@
     col: 0
     width: 24
     height: 12
+
+  # =====================================================
+  # SECTION: COST ALLOCATION SUMMARY
+  # =====================================================
+
   - name: section_header_allocation_summary
     type: text
     title_text: "<h2>Cost Allocation Summary</h2>"
@@ -908,52 +904,49 @@
     pivots: [cur2.environment]
     sorts: [cur2.total_unblended_cost desc 0, cur2.environment]
     limit: 20
-  filters:
-    visualization_config:
-      column_limit: 10
-      show_view_names: false
-      show_row_numbers: true
-      transpose: false
-      truncate_text: true
-      hide_totals: false
-      hide_row_totals: false
-      size_to_fit: true
-      table_theme: white
-      limit_displayed_rows: false
-      enable_conditional_formatting: true
-      header_text_alignment: left
-      header_font_size: 11
-      rows_font_size: 11
-      conditional_formatting:
-      - type: greater than
-        value: 5000
-        background_color: "#dc2626"
-        font_color: "#ffffff"
-        bold: true
-      - type: between
-        value: [1000, 5000]
-        background_color: "#fbbf24"
-        font_color: "#000000"
-        bold: false
-      - type: less than
-        value: 1000
-        background_color: "#dcfce7"
-        font_color: "#166534"
-        bold: false
-      series_value_format:
-        cur2.total_unblended_cost: "$#,##0.00"
-      series_cell_visualizations:
-        cur2.total_unblended_cost:
-          is_active: true
-          palette:
-            palette_id: custom_diverging
-            collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
-            custom_colors:
-            - "#dcfce7"
-            - "#fef3c7"
-            - "#fecaca"
-      defaults_version: 1
-    note_text: "Element visualization"
+    column_limit: 10
+    show_view_names: false
+    show_row_numbers: true
+    transpose: false
+    truncate_text: true
+    hide_totals: false
+    hide_row_totals: false
+    size_to_fit: true
+    table_theme: white
+    limit_displayed_rows: false
+    enable_conditional_formatting: true
+    header_text_alignment: left
+    header_font_size: 11
+    rows_font_size: 11
+    conditional_formatting:
+    - type: greater than
+      value: 5000
+      background_color: "#dc2626"
+      font_color: "#ffffff"
+      bold: true
+    - type: between
+      value: [1000, 5000]
+      background_color: "#fbbf24"
+      font_color: "#000000"
+      bold: false
+    - type: less than
+      value: 1000
+      background_color: "#dcfce7"
+      font_color: "#166534"
+      bold: false
+    series_value_format:
+      cur2.total_unblended_cost: "$#,##0.00"
+    series_cell_visualizations:
+      cur2.total_unblended_cost:
+        is_active: true
+        palette:
+          palette_id: custom_diverging
+          collection_id: 7c56cc21-66e4-41c9-81ce-a60e1c3967b2
+          custom_colors:
+          - "#dcfce7"
+          - "#fef3c7"
+          - "#fecaca"
+    defaults_version: 1
     listen:
       Billing Period: cur2.line_item_usage_start_date
       AWS Account: cur2.line_item_usage_account_name
@@ -964,6 +957,8 @@
     col: 0
     width: 24
     height: 10
+
+  filters:
   - name: Billing Period
     title: "Billing Period"
     type: field_filter
@@ -977,7 +972,7 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.line_item_usage_start_date
-    note_text: "Billing Period visualization"
+
   - name: AWS Account
     title: "AWS Account"
     type: field_filter
@@ -991,7 +986,7 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.line_item_usage_account_name
-    note_text: "AWS Account visualization"
+
   - name: Cost Center
     title: "Cost Center (Team)"
     type: field_filter
@@ -1005,7 +1000,7 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.team
-    note_text: "Cost Center (Team) visualization"
+
   - name: Department
     title: "Department (Project)"
     type: field_filter
@@ -1019,7 +1014,7 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.project
-    note_text: "Department (Project) visualization"
+
   - name: Environment
     title: "Environment"
     type: field_filter
@@ -1033,7 +1028,7 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.environment
-    note_text: "Environment visualization"
+
   - name: Service Category
     title: "Service Category"
     type: field_filter
@@ -1047,4 +1042,4 @@
     explore: cur2
     listens_to_filters: []
     field: cur2.service_category
-    note_text: "Service Category visualization"
+
