@@ -16,7 +16,7 @@
       type: relative_timeframes
       display: inline
     model: aws_billing
-    explore: aws_summary_cur2
+    explore: cur2
     dimension: cur2.line_item_usage_start_date
 
   - name: product_name_filter
@@ -29,7 +29,7 @@
       type: tag_list
       display: popover
     model: aws_billing
-    explore: aws_summary_cur2
+    explore: cur2
     dimension: cur2.line_item_product_code
 
   - name: resource_id_filter
@@ -42,7 +42,7 @@
       type: tag_list
       display: popover
     model: aws_billing
-    explore: aws_summary_cur2
+    explore: cur2
     dimension: cur2.line_item_resource_id
 
   elements:
